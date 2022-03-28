@@ -1,31 +1,126 @@
-var name1 = document.getElementById('name1');
-var username1 = document.getElementById('username1');
-var phoneno1 = document.getElementById('phoneno1');
-var password1 = document.getElementById('password1');
-var shopid1 = document.getElementById('shopid1');
+const { restart } = require("nodemon"); 
+const API_URL = 'http://localhost:5000/api';
+$.get(`${API_URL}/user`)
+  .then(response => {
+    console.log(response);
+  })
+  .catch(error => {
+    console.log(`Error: ${error}`);
+  });
+$.get(`${API_URL}/user`)
+  .then(response => {
+    response.forEach(user => {
+      $('#users tbody').append(`
+      <tr>
+        <td>${user.name1}</td>
+        <td>${user.username1}</td>
+        <td>${user.phoneno1}</td>
+        <td>${user.password1}</td>
+      </tr>`
+      );
+    });
+  })
+
+  .catch(error => {
+    console.error(`Error: ${error}`);
+  });
+
+$('#store').on('click', () => {
+  const name1 = $('#name1').val();
+  const username1 = $('#username1').val();
+  const phoneno1 = $('#phoneno1').val();
+  const password1 = $('#password1').val();
+
+  const body = {
+    name1,
+    username1,
+    phoneno1,
+    password1
+  };
+
+  $.post(`${API_URL}/user`, body)
+    .then(response => {
+      location.href = '/menu';
+    })
+    .catch(error => {
+      console.error(`Error: ${error}`);
+    });
+});
+// app.get("check"), async (req, res) => {
+//   try {
+//     const username = req.body.loginusername;
+//     const password = req.body.loginpassword;
+
+//     const a = await database.findOne({ username1: username })
+
+//     if (a.password === password1) {
+//       //res.status(201).render("menu");
+//       alert('You are loged in.');
+//       //window.open('menu.html');
+//     }
+//     else {
+//       alert("invalid");
+//       //alert('Please check your Username and Password');
+//     }
+
+//   } catch (error) {
+//     res.status(400).send("invalid")
+
+//   }
+// }
 
 
-function store() {
-    localStorage.setItem('name1', name1.value);
-    localStorage.setItem('username1', username1.value);
-    localStorage.setItem('phoneno1', phoneno1.value);
-    localStorage.setItem('password1', password1.value);
-    localStorage.setItem('shopid1', shopid1.value);
-}
+// $('#check').on('click', () => {
+//   alert("Hello");
+//   try {
+//     const username = $('#loginusername').val();
+//     const password = $('#loginpassword').val();
+//     const body = {
+//       username,
+//       password
+//     };
+
+//     const a = database.database.findOne({ username1: username })
+
+//     alert(a);
+//     if (a.password === password1 || a == username1) {
+//       // res.status(201).render("menu");
+//       alert('You are loged in.');
+//       //window.open('menu.html');
+//     }
+//     else {
+//       // res.send("invalid credentials");
+//       alert('Please check your Username and Password');
+//     }
+
+//   } catch (error) {
+//     res.status(400).send("invalid")
+//   }
+// });
+
 function check() {
+    const username = $('#loginusername').val();
+    const password = $('#loginpassword').val();
+    const body = {
+      username,
+      password
+    };
+    //window.open('menu.html');
 
-    var storedusername1 = localStorage.getItem('username1');
-    var storedpassword1 = localStorage.getItem('password1');
+    const a = database.findOne({ username1: username.val })
 
-    var userName = document.getElementById('loginusername');
-    var userPw = document.getElementById('loginpassword');
-
-
-    if(userName.value == storedusername1 && userPw.value == storedpassword1) {
-        alert('You are loged in.');
-        window.open('menu.html');
+    if (a.password === password1 ) {
+      // res.status(201).render("menu");
+      alert('You are loged in.');
+      //window.open('menu.html');
     }
-    else{
-        alert('Please check your Username and Password');
+    else {
+      // res.send("invalid credentials");
+      alert('Please check your Username and Password');
     }
-}
+
+    $.post(`${API_URL}/user`, body)
+    .then(response => {
+      location.href = '/menu';
+    })
+};
