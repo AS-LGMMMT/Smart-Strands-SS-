@@ -1,126 +1,110 @@
-const { restart } = require("nodemon"); 
+
 const API_URL = 'http://localhost:5000/api';
-$.get(`${API_URL}/user`)
-  .then(response => {
-    console.log(response);
-  })
-  .catch(error => {
-    console.log(`Error: ${error}`);
-  });
-$.get(`${API_URL}/user`)
+const API_URL2 = 'http://localhost:3100/api';
+
+$.get(`${API_URL2}/user`)
   .then(response => {
     response.forEach(user => {
-      $('#users tbody').append(`
+      $('#app tbody').append(`
       <tr>
-        <td>${user.name1}</td>
-        <td>${user.username1}</td>
-        <td>${user.phoneno1}</td>
-        <td>${user.password1}</td>
+        <td>${user.name2}</td>
+        <td>${user.phoneno2}</td>
+        <td>${user.email2}</td>
+        <td>${user.service}</td>
       </tr>`
       );
     });
-  })
+})
 
-  .catch(error => {
-    console.error(`Error: ${error}`);
-  });
+$('#submit').on('click', () => {
+  const name2 = $('#name2').val();
+  const phoneno2 = $('#phoneno2').val();
+  const email2 = $('#email2').val();
+  const service = $('#service').val();
+
+  const body = {
+    name2,
+    phoneno2,
+    email2,
+    service
+  };
+  
+  if (name2 =="" || email2 ==""|| phoneno2 == "" || service =="")
+  {
+    alert ("Please fill all the details")
+  }
+  else{
+    $.post(`${API_URL2}/user`, body)
+  .then(response => {
+    location.href = '/menu';
+  })
+  }
+
+});
 
 $('#store').on('click', () => {
   const name1 = $('#name1').val();
   const username1 = $('#username1').val();
   const phoneno1 = $('#phoneno1').val();
   const password1 = $('#password1').val();
+  const shopid = $('#shopid').val();
 
   const body = {
     name1,
     username1,
     phoneno1,
-    password1
+    password1,
+    shopid
   };
 
-  $.post(`${API_URL}/user`, body)
-    .then(response => {
-      location.href = '/menu';
+  var a=0;
+  $.get(`${API_URL}/users`).then(
+    response => {
+      response.forEach(users => {
+        if(name1 =="" || username1 ==""|| phoneno1 == "" || password1 =="" )
+        {
+          a=2;
+          alert("Please fill all the details");
+        }
+        if (users.username1 == username1 && a==0) {
+          a=1;
+          alert('username already exists');
+          location.href = '/signup';
+        }
+        
+      })
+      if(a==0)
+        {
+          $.post(`${API_URL}/user`, body)
+          .then(response => {
+          location.href = '/';
+          })
+          .catch(error => {
+          console.error(`Error: ${error}`);
+          });
+        }
     })
-    .catch(error => {
-      console.error(`Error: ${error}`);
-    });
 });
-// app.get("check"), async (req, res) => {
-//   try {
-//     const username = req.body.loginusername;
-//     const password = req.body.loginpassword;
-
-//     const a = await database.findOne({ username1: username })
-
-//     if (a.password === password1) {
-//       //res.status(201).render("menu");
-//       alert('You are loged in.');
-//       //window.open('menu.html');
-//     }
-//     else {
-//       alert("invalid");
-//       //alert('Please check your Username and Password');
-//     }
-
-//   } catch (error) {
-//     res.status(400).send("invalid")
-
-//   }
-// }
-
-
-// $('#check').on('click', () => {
-//   alert("Hello");
-//   try {
-//     const username = $('#loginusername').val();
-//     const password = $('#loginpassword').val();
-//     const body = {
-//       username,
-//       password
-//     };
-
-//     const a = database.database.findOne({ username1: username })
-
-//     alert(a);
-//     if (a.password === password1 || a == username1) {
-//       // res.status(201).render("menu");
-//       alert('You are loged in.');
-//       //window.open('menu.html');
-//     }
-//     else {
-//       // res.send("invalid credentials");
-//       alert('Please check your Username and Password');
-//     }
-
-//   } catch (error) {
-//     res.status(400).send("invalid")
-//   }
-// });
 
 function check() {
-    const username = $('#loginusername').val();
-    const password = $('#loginpassword').val();
-    const body = {
-      username,
-      password
-    };
-    //window.open('menu.html');
-
-    const a = database.findOne({ username1: username.val })
-
-    if (a.password === password1 ) {
-      // res.status(201).render("menu");
-      alert('You are loged in.');
-      //window.open('menu.html');
-    }
-    else {
-      // res.send("invalid credentials");
-      alert('Please check your Username and Password');
-    }
-
-    $.post(`${API_URL}/user`, body)
-    .then(response => {
-      location.href = '/menu';
+  const username = $('#loginusername').val();
+  const password = $('#loginpassword').val();
+  var a=0;
+  $.get(`${API_URL}/users`).then(
+    response => {
+      response.forEach(users => {
+        if (users.username1 == username && users.password1 == password && users.shopid == null) {
+          a=1;
+          location.href = '/menu';
+        }
+        if (users.username1 == username && users.password1 == password && users.shopid != null) {
+          a=1;
+          location.href = '/menu2';
+        }
+      })
+      if(a== 0)
+      {
+        alert('Please check your Username and Password');
+      }
     })
-};
+  }
